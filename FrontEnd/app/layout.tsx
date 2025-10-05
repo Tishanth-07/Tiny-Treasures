@@ -13,14 +13,24 @@ import { Metadata } from "next";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
 
+// Viewport configuration
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: '#ffffff',
+};
+
 export const metadata: Metadata = {
   title: 'Tiny Treasure',
   description: 'Discover beautiful 3D miniatures and collectibles',
   icons: {
-    icon: '/logo.jpg',
-    shortcut: '/logo.jpg',
-    apple: '/logo.jpg',
+    // Use a simple configuration with just the logo
+    icon: { url: '/logo.jpg', type: 'image/jpg' },
+    apple: { url: '/logo.jpg', type: 'image/jpg' },
   },
+  // Add other metadata
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({

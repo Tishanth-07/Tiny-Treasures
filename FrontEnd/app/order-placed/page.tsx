@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import axiosInstance from "@/services/api";
+import CustomerReviewsSection from "@/components/review/AddReview";
 import Loading from "@/components/symbol/loading";
 import { FaHandPointRight } from "react-icons/fa";
 import {
@@ -332,6 +333,10 @@ const OrderConfirmed = () => {
               </button>
             </div>
           </div>
+        </div>
+         {/* Customer Reviews Section */}
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-12 mb-8 bg-gray-50">
+          <CustomerReviewsSection productId={orderDetails.items[0]?.productId} />
         </div>
       </div>
 

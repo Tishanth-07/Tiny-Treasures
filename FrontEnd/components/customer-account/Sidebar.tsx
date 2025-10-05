@@ -12,14 +12,19 @@ import {
   FaBars,
   FaTimes,
   FaEdit,
+  FaHome,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import ProfileSettings from "@/components/customer-account/ProfileSettings";
-import { FaHome, FaSignOutAlt } from "react-icons/fa";
-import LogoutButton from "@/components/auth-components/LogoutButton"; 
+import LogoutButton from "@/components/auth-components/LogoutButton";
 import { getProfile } from "@/utils/profileApi";
+import toast from "react-hot-toast";
+import router from "next/router";
+import { logout } from "@/utils/auth";
+
 const Sidebar = () => {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
@@ -27,8 +32,8 @@ const Sidebar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
   const menuItems = [
     { name: "My Profile", href: "/customerAccount/profile", icon: <FaUser /> },
@@ -61,17 +66,10 @@ const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
     };
   }, [session?.user?.email]);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <>
@@ -95,13 +93,11 @@ const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
       {/* Sidebar */}
       <div
         className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-80 lg:w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 shadow-xl lg:shadow-lg transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen
-            ? "translate-x-0"
-            : "-translate-x-full lg:translate-x-0"
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
         <div className="flex flex-col h-full p-6">
-          {/* Profile Section with Edit Button */}
+          {/* Profile Section */}
           <div className="flex flex-col items-center mb-8 p-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 relative">
             <div className="relative mb-4">
               <img
@@ -163,43 +159,48 @@ const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
             </ul>
           </nav>
 
-       <div className="flex flex-col gap-3 -mt-4"> {/* Adjusted margin to move up */}
-  {/* Home and Logout buttons row */}
-  <div className="flex justify-between gap-3">
-    {/* Home Button */}
-    <Link href="/home">
-      <div className="flex-1 flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium shadow transition-all cursor-pointer transform hover:scale-[1.02]">
-        <FaHome className="text-base" />
-        <span>Home</span>
-      </div>
-    </Link>
+          {/* Bottom Buttons */}
+          <div className="flex flex-col gap-3 -mt-4">
+            {/* Home + Logout */}
+            <div className="flex justify-between gap-3">
+              {/* Home Button */}
+              <Link href="/home" className="flex-1">
+                <div className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium shadow transition-all cursor-pointer transform hover:scale-[1.02]">
+                  <FaHome className="text-base" />
+                  <span>Home</span>
+                </div>
+              </Link>
 
-    {/* Logout Button */}
-    <div className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium shadow transition-all transform hover:scale-[1.02]">
-      <FaSignOutAlt className="text-base" />
-      <LogoutButton />
-    </div>
-  </div>
+              {/* Logout Button */}
+              <div className="flex-1">
+                <button
+                  onClick={() => {
+                    const confirmLogout = window.confirm("Are you sure you want to logout?");
+                    if (!confirmLogout) return;
+                    logout();
+                    toast.success("Logged out successfully!");
+                    router.push("/home");
+                  }}
+                  className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium shadow transition-all cursor-pointer transform hover:scale-[1.02] w-full"
+                >
+                  <FaSignOutAlt className="text-base" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
 
-  {/* Theme Toggle Button - now in black */}
-  <button
-    className="w-full flex items-center justify-center gap-3 p-3 rounded-lg bg-gradient-to-r from-gray-800 to-gray-900 text-white hover:from-gray-700 hover:to-gray-800 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-[1.02]"
-    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-    aria-label="Toggle theme"
-  >
-    <span className="text-lg">
-      {theme === "dark" ? (
-        <FaSun className="text-yellow-300" />
-      ) : (
-        <FaMoon className="text-gray-300" />
-      )}
-    </span>
-    <span className="font-medium">
-      {theme === "dark" ? "Light Mode" : "Dark Mode"}
-    </span>
-  </button>
-</div>
-          
+            {/* Theme Toggle */}
+            <button
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-all duration-200 text-sm font-medium shadow"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label="Toggle theme"
+            >
+              <span className="text-base">
+                {theme === "dark" ? <FaSun className="text-yellow-300" /> : <FaMoon className="text-gray-300" />}
+              </span>
+              <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+            </button>
+          </div>
 
           {/* Footer */}
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">

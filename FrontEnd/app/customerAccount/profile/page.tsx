@@ -47,19 +47,19 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const transformAddressData = (addr: Partial<AddressData>): AddressData => ({
-    firstName: addr.firstName || "",
-    lastName: addr.lastName || "",
-    province: addr.province || "",
-    district: addr.district || "",
-    city: addr.city || "",
-    area: addr.area || "",
-    houseNo: addr.houseNo || "",
-    postalCode: addr.postalCode || "",
-    country: addr.country || "United States",
-    anyInformation: addr.anyInformation || "",
-    _id: addr._id,
-    isDefault: addr.isDefault || false,
+  const transformAddressData = (addr: any): AddressData => ({
+    firstName: addr?.firstName || addr?.FirstName || "",
+    lastName: addr?.lastName || addr?.LastName || "",
+    province: addr?.province || addr?.Provience || "",
+    district: addr?.district || addr?.District || "",
+    city: addr?.city || addr?.City || "",
+    area: addr?.area || addr?.Area || "",
+    houseNo: addr?.houseNo || addr?.HouseNo || "",
+    postalCode: addr?.postalCode || addr?.PostalCode || "",
+    country: addr?.country || addr?.Country || "United States",
+    anyInformation: addr?.anyInformation || addr?.AnyInformation || "",
+    _id: addr?._id,
+    isDefault: addr?.isDefault || addr?.default || false,
   });
 
   useEffect(() => {
@@ -122,28 +122,38 @@ export default function ProfilePage() {
   const handleSaveAddress = async (address: AddressData) => {
     try {
       setSaving(true);
-
-      // Create updated addresses array
-      const updatedAddresses = address._id
-        ? addresses.map((a) => (a._id === address._id ? address : a))
-        : [...addresses, address];
-
-      // Update user data with new addresses
-      const updatedUser = await updateProfile({
-        ...userData,
-        addresses: updatedAddresses,
+      // Use backend address API to persist
+      await addAddress({
+        firstName: address.firstName,
+        lastName: address.lastName,
+        province: address.province,
+        district: address.district,
+        city: address.city,
+        area: address.area,
+        houseNo: address.houseNo,
+        postalCode: address.postalCode,
+        country: address.country,
+        anyInformation: address.anyInformation,
+        isDefault: address.isDefault,
       });
 
-      if (updatedUser) {
-        setUserData({
-          ...userData,
-          addresses: updatedUser.addresses || [],
-        });
-        setAddresses(updatedAddresses);
-        setEditAddressMode(false);
-        setCurrentAddress(null);
-        toast.success("Address saved successfully");
-      }
+      // Refetch full profile to sync UI
+      const profileRes = await getProfile();
+      const profile = (profileRes as any).profile;
+      const userAddresses = profile?.addresses || [];
+      const normalized = userAddresses.map(transformAddressData);
+      setAddresses(normalized);
+      setUserData({
+        name: profile?.name || "",
+        email: profile?.email || "",
+        mobile: profile?.mobile || "",
+        birthday: profile?.birthday || "",
+        gender: profile?.gender || "",
+        addresses: userAddresses,
+      });
+      setEditAddressMode(false);
+      setCurrentAddress(null);
+      toast.success("Address saved successfully");
     } catch (err: any) {
       setError(err.message || "Error saving address");
       toast.error("Failed to save address");
@@ -160,23 +170,24 @@ export default function ProfilePage() {
 
     try {
       setSaving(true);
-      const updatedAddresses = addresses.filter((a) =>
-        a._id === id ? false : true
-      );
+      // Call backend delete endpoint (controller unsets address)
+      await deleteAddress(id || "current");
 
-      const updatedUser = await updateProfile({
-        ...userData,
-        addresses: [],
+      // Refetch to confirm removal
+      const profileRes = await getProfile();
+      const profile = (profileRes as any).profile;
+      const userAddresses = profile?.addresses || [];
+      const normalized = userAddresses.map(transformAddressData);
+      setAddresses(normalized);
+      setUserData({
+        name: profile?.name || "",
+        email: profile?.email || "",
+        mobile: profile?.mobile || "",
+        birthday: profile?.birthday || "",
+        gender: profile?.gender || "",
+        addresses: userAddresses,
       });
-
-      if (updatedUser) {
-        setUserData({
-          ...userData,
-          addresses: [],
-        });
-        setAddresses(updatedAddresses);
-        toast.success("Address deleted successfully");
-      }
+      toast.success("Address deleted successfully");
     } catch (err: any) {
       setError(err.message || "Error deleting address");
       toast.error("Failed to delete address");

@@ -1,3 +1,5 @@
+
+// side bar
 import Sidebar from "@/components/user-history/slidebar";
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {

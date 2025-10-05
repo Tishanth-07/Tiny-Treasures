@@ -56,8 +56,8 @@ const LoginForm = () => {
     setMessage("✅ Login successful!");
 
     setTimeout(() => {
-      if (role === "admin") {
-        router.push("/Admin/dashboard"); 
+      if (role.toLowerCase() === "admin") {
+        router.push("/Admin/dashboard"); // admin page
       } else {
 router.push(callbackUrl || "/home");
       }

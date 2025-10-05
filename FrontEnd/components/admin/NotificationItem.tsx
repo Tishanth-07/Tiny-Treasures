@@ -1,39 +1,58 @@
+// components/admin/NotificationList.tsx
 "use client";
-import { Notification } from "@/types/admin/notification";
+import { useEffect, useState } from "react";
 
-interface Props {
-  notification: Notification;
-  onMarkAsSeen: (id: string) => void;
-}
+type Notification = {
+  _id: string;
+  type: string;
+  message: string;
+  isSeen: boolean;
+  createdAt: string;
+};
 
-export default function NotificationItem({ notification, onMarkAsSeen }: Props) {
+export default function NotificationList() {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  useEffect(() => {
+    fetch("/api/notifications/unseen")
+      .then((res) => res.json())
+      .then((data) => setNotifications(data))
+      .catch((err) => console.error("Fetch notifications failed", err));
+  }, []);
+
+  const handleMarkAsSeen = async (id: string) => {
+    await fetch(`/api/notifications/seen/${id}`, { method: "PATCH" });
+    setNotifications((prev) =>
+      prev.map((n) => (n._id === id ? { ...n, isSeen: true } : n))
+    );
+  };
+
   return (
-    <div
-      className={`p-5 mb-5 border rounded-lg shadow-sm transition duration-300 ${
-        !notification.seen
-          ? "bg-yellow-50 border-yellow-400 hover:bg-yellow-100"
-          : "bg-white border-gray-200 hover:bg-gray-50"
-      }`}
-    >
-      <div className="flex justify-between items-start">
-        <div className="space-y-1">
-          <p className="text-sm font-semibold text-gray-800">
-            {notification.type?.toUpperCase()}
-          </p>
-          <p className="text-gray-700">{notification.message}</p>
-          <p className="text-xs text-gray-500">
-            {new Date(notification.createdAt).toLocaleString()}
-          </p>
-        </div>
-        {!notification.seen && (
-          <button
-            onClick={() => onMarkAsSeen(notification._id)}
-            className="ml-4 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+    <div className="p-4 space-y-4">
+      <h2 className="text-xl font-bold">🔔 New Notifications</h2>
+      {notifications.length === 0 ? (
+        <p>No new notifications</p>
+      ) : (
+        notifications.map((n) => (
+          <div
+            key={n._id}
+            className="border p-3 rounded shadow-md flex justify-between items-center"
           >
-            Mark As Seen
-          </button>
-        )}
-      </div>
+            <div>
+              <p>{n.message}</p>
+              <p className="text-sm text-gray-500">
+                {new Date(n.createdAt).toLocaleString()}
+              </p>
+            </div>
+            <button
+              onClick={() => handleMarkAsSeen(n._id)}
+              className="text-blue-600 hover:underline"
+            >
+              Mark as seen
+            </button>
+          </div>
+        ))
+      )}
     </div>
   );
 }

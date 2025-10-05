@@ -4,7 +4,7 @@ import Order from '../../models/Order.js';
 // Get all pending orders
 export const getPendingOrders = async (req, res) => {
     try {
-        const pendingOrders = await Order.find({ status: "Pending" }).sort({ date: -1 });
+        const pendingOrders = await Order.find({ status: "Processing" }).sort({ date: -1 });
         const flatOrders = [];
 
         pendingOrders.forEach((order) => {
@@ -18,8 +18,8 @@ export const getPendingOrders = async (req, res) => {
                     // From product item
                     productId: item.productId,
                     name: item.name,
-                    cid: order.userId,  // or some other customer id if you have
-                    category: item.category || "-", // add category if you store it in item, else "-"
+                    cid: order.userId,  
+                    category: item.category || "-", 
                     frameColor: item.frameColor,
                     theme: item.themeColor || item.theme || "-",
                     size: item.size,
@@ -42,7 +42,7 @@ export const updatePendingOrderStatus = async (req, res) => {
         const OrderId = req.params.id;
         const { status } = req.body;
 
-        const validStatuses = ["Order Placed", "Pending", "Completed"];
+        const validStatuses = ["Order Placed", "Processing", "Completed"];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: "Invalid status value" });
         }

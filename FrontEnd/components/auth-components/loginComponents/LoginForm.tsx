@@ -49,17 +49,18 @@ const LoginForm = () => {
   try {
     const data = await login(formData.email, formData.password);
 
-    // Role-based redirect
+    // Role-based redirect with callbackUrl override
     const role = data.user.role;
     console.log("Role is:", role);
     setMessage("✅ Login successful!");
 
+    // Prefer callbackUrl if present and safe (starts with a single '/')
+    const isSafePath = (url?: string | null) => !!url && /^\/(?!\/)/.test(url);
+    const defaultPath = role.toLowerCase() === "admin" ? "/Admin/dashboard" : "/home";
+    const target = isSafePath(callbackUrl) ? (callbackUrl as string) : defaultPath;
+
     setTimeout(() => {
-      if (role.toLowerCase() === "admin") {
-        router.push("/Admin/dashboard"); // admin page
-      } else {
-        router.push("/home"); // normal user page
-      }
+      router.push(target);
     }, 1500);
   } catch (err: any) {
     setMessage(`❌ ${err.message}`);

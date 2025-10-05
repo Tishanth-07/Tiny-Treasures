@@ -17,18 +17,19 @@ import {
 } from "react-icons/fa";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import ProfileSettings from "@/components/customer-account/ProfileSettings";
 import LogoutButton from "@/components/auth-components/LogoutButton";
 import { getProfile } from "@/utils/profileApi";
 import toast from "react-hot-toast";
-import router from "next/router";
-import { logout } from "@/utils/auth";
+import { useRouter } from "next/navigation";
+import { clearAuthToken } from "@/utils/auth-utils/api";
 
 const Sidebar = () => {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -183,9 +184,11 @@ const Sidebar = () => {
                   onClick={() => {
                     const confirmLogout = window.confirm("Are you sure you want to logout?");
                     if (!confirmLogout) return;
-                    logout();
+                    // Clear custom token and sign out of NextAuth
+                    try { clearAuthToken(); } catch {}
                     toast.success("Logged out successfully!");
-                    router.push("/home");
+                    // Use NextAuth signOut to clear session and redirect
+                    signOut({ callbackUrl: "/home" });
                   }}
                   className="flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-medium shadow transition-all cursor-pointer transform hover:scale-[1.02] w-full"
                 >

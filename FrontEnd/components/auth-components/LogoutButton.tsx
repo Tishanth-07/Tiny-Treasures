@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { logout } from "@/utils/auth";
+import { signOut } from "next-auth/react";
+import { clearAuthToken } from "@/utils/auth-utils/api";
 import { toast } from "react-hot-toast";
 // import { useUserContext } from "@/context/UserContext"; // if you're using one
 
@@ -13,10 +14,11 @@ const LogoutButton = () => {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
     if (!confirmLogout) return;
 
-    logout();
+    try { clearAuthToken(); } catch {}
     // setUser(null); // optional: clear context
     toast.success("✅ Logged out successfully!");
-    router.push("/authentication/login");
+    // Use NextAuth signOut to clear session and redirect
+    signOut({ callbackUrl: "/authentication/login" });
   };
 
   return (

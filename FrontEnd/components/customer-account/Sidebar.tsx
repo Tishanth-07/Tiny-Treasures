@@ -34,6 +34,7 @@ const Sidebar = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
 
   const menuItems = [
     { name: "My Profile", href: "/customerAccount/profile", icon: <FaUser /> },
@@ -52,9 +53,14 @@ const Sidebar = () => {
     const run = async () => {
       try {
         const res = await getProfile();
-        const img = (res as any)?.profile?.profileImage;
+        const profile = (res as any)?.profile;
+        const img = profile?.profileImage;
+        const name = profile?.name;
         if (!cancelled && img) {
           setProfileImageUrl(img);
+        }
+        if (!cancelled && name) {
+          setProfileName(name);
         }
       } catch (e) {
         // ignore; fallback images will render
@@ -122,7 +128,7 @@ const Sidebar = () => {
               </button>
             </div>
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1 truncate max-w-full">
-              Hello, {session?.user?.name?.split(" ")[0] || "Buddy"}
+              Hello, {profileName?.split(" ")[0] || profileName || session?.user?.name?.split(" ")[0] || session?.user?.name || session?.user?.email?.split("@")[0] || "User"}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-full">
               {session?.user?.email || "Welcome!"}

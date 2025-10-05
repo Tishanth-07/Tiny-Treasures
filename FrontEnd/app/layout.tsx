@@ -69,11 +69,11 @@ export default function RootLayout({
 
           <Toaster position="top-right" reverseOrder={false} />
         <AppContextProvider>
-          <WishlistProvider>
-            <Header />
+          {/* <WishlistProvider> */}
+            {/* <Header /> */}
             <main className="min-h-screen">{children}</main>
-            <Footer />
-          </WishlistProvider>
+            {/* <Footer /> */}
+          {/* </WishlistProvider> */}
         </AppContextProvider>
       </body>
     </html>

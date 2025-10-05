@@ -19,6 +19,7 @@ import { useSession } from "next-auth/react";
 import ProfileSettings from "@/components/customer-account/ProfileSettings";
 import { FaHome, FaSignOutAlt } from "react-icons/fa";
 import LogoutButton from "@/components/auth-components/LogoutButton"; 
+import { getProfile } from "@/utils/profileApi";
 const Sidebar = () => {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
@@ -27,6 +28,7 @@ const Sidebar = () => {
   const [mounted, setMounted] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
 
   const menuItems = [
     { name: "My Profile", href: "/customerAccount/profile", icon: <FaUser /> },
@@ -38,6 +40,26 @@ const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Fetch persisted profile image on mount and when session changes
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const res = await getProfile();
+        const img = (res as any)?.profile?.profileImage;
+        if (!cancelled && img) {
+          setProfileImageUrl(img);
+        }
+      } catch (e) {
+        // ignore; fallback images will render
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.email]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -85,6 +107,7 @@ const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
               <img
                 src={
                   uploadedImageUrl ||
+                  profileImageUrl ||
                   session?.user?.image ||
                   "/default-product.jpg"
                 }
@@ -203,7 +226,10 @@ const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
             </div>
             <ProfileSettings
               onClose={() => setIsProfileModalOpen(false)}
-              onImageUpload={(url) => setUploadedImageUrl(url)}
+              onImageUpload={(url) => {
+                setUploadedImageUrl(url);
+                setProfileImageUrl(url);
+              }}
             />
           </div>
         </div>

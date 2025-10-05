@@ -10,10 +10,33 @@ import { Toaster } from "react-hot-toast";
 import { WishlistProvider } from "@/context/WishlistContext";
 import ClientWrapper from "@/components/ClientWrapper";
 
-// Optional SEO metadata
+// Website metadata
 export const metadata: Metadata = {
-  title: "Your App Name",
-  description: "Your App Description",
+  title: "Tiny Treasures - Handcrafted Miniature Models",
+  description: "Discover our unique collection of handcrafted miniature models. Perfect for collectors and hobbyists.",
+  icons: {
+    icon: '/logo.jpg',
+    apple: '/logo.jpg',
+  },
+  openGraph: {
+    title: 'Tiny Treasures - Handcrafted Miniature Models',
+    description: 'Discover our unique collection of handcrafted miniature models. Perfect for collectors and hobbyists.',
+    images: [
+      {
+        url: '/logo.jpg',
+        width: 800,
+        height: 600,
+        alt: 'Tiny Treasures Logo',
+      },
+    ],
+    siteName: 'Tiny Treasures',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tiny Treasures - Handcrafted Miniature Models',
+    description: 'Discover our unique collection of handcrafted miniature models',
+    images: ['/logo.jpg'],
+  },
 };
 
 export default function RootLayout({

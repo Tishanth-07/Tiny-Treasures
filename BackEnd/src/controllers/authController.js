@@ -56,24 +56,36 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log('Login attempt for email:', email);
+
+        if (!email || !password) {
+            console.log('Missing email or password');
+            return res.status(400).json({ message: 'Please provide both email and password' });
+        }
 
         // Check if user exists
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: email.toLowerCase().trim() });
         if (!user) {
+            console.log('User not found:', email);
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
         if (!user.password) {
-            return res.status(400).json({ message: 'Please sign in with Google' });
+            console.log('No password set - social login required');
+            return res.status(400).json({ message: 'Please sign in with your social account' });
         }
 
-        // Verify password
+        // Debug: Log the password comparison
+        console.log('Comparing passwords...');
         const isMatch = await bcrypt.compare(password, user.password);
+        
         if (!isMatch) {
+            console.log('Password does not match');
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
         const token = generateToken(user);
+        console.log('Login successful for user:', user.email);
 
         res.json({
             message: 'Login successful',
@@ -82,12 +94,15 @@ export const login = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role 
+                role: user.role || 'customer' // Ensure default role is set
             }
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Error during login' });
+        res.status(500).json({ 
+            message: 'Error during login',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 };
 

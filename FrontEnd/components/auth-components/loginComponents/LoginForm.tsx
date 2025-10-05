@@ -24,9 +24,9 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  
+
   setMessage("");
-   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(formData.email)) {
     setMessage("❌ Please enter a valid email address.");
     return;
@@ -46,7 +46,6 @@ const LoginForm = () => {
     return;
   }
   setLoading(true);
-
   try {
     const data = await login(formData.email, formData.password);
 
@@ -59,7 +58,7 @@ const LoginForm = () => {
       if (role.toLowerCase() === "admin") {
         router.push("/Admin/dashboard"); // admin page
       } else {
-router.push(callbackUrl || "/home");
+        router.push("/home"); // normal user page
       }
     }, 1500);
   } catch (err: any) {

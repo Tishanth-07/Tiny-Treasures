@@ -218,10 +218,6 @@ export default function ProductPage() {
           <ProductCarousel productId={id} />
         </div>
 
-        {/* Customer Reviews Section */}
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-12 mb-8 bg-gray-50">
-          <CustomerReviewsSection productId={product._id} />
-        </div>
       </div>
     </div>
   );

@@ -20,7 +20,15 @@ router.post('/reset-password', resetPassword);
 router.get('/me', authUser,getCurrentUser);
 
 // Google routes (unchanged)
+// Google routes (unchanged)
 router.get('/google',
+    passport.authenticate('google', 
+        { scope: ['profile', 'email'],
+            prompt: 'consent'
+            
+         })
+        
+
     passport.authenticate('google', 
         { scope: ['profile', 'email'],
             prompt: 'consent'
@@ -39,7 +47,7 @@ router.get('/google/callback',
 router.get('/facebook',
     passport.authenticate('facebook',
          { scope: ['email', 'public_profile'],
-           // authType: 'reauthenticate'      //This forces Facebook to re-prompt login
+            authType: 'reauthenticate'      //This forces Facebook to re-prompt login
           })
 );
 router.get('/facebook/callback',

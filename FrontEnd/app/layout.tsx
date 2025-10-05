@@ -6,8 +6,34 @@ import "slick-carousel/slick/slick-theme.css";
 import "react-toastify/dist/ReactToastify.css";
 
 import Script from "next/script";
+import { AppContextProvider } from "@/context/AppContext";
 import { Toaster } from "react-hot-toast";
+import "react-toastify/dist/ReactToastify.css";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { Metadata } from "next";
+
+import Header from "@/components/header/header";
+import Footer from "@/components/footer/footer";
+
+// Viewport configuration
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: '#ffffff',
+};
+
+export const metadata: Metadata = {
+  title: 'Tiny Treasure',
+  description: 'Discover beautiful 3D miniatures and collectibles',
+  icons: {
+    // Use a simple configuration with just the logo
+    icon: { url: '/logo.jpg', type: 'image/jpg' },
+    apple: { url: '/logo.jpg', type: 'image/jpg' },
+  },
+  // Add other metadata
+  manifest: '/site.webmanifest',
+};
 import ClientWrapper from "@/components/ClientWrapper";
 
 // Optional SEO metadata
@@ -30,15 +56,34 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
 
-        {/* Global Toast Notifications */}
-        <Toaster position="top-center" />
+        {/* Tawk.to Live Chat Script */}
+        <Script
+          id="tawk-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+              (function () {
+                var s1 = document.createElement("script"),
+                  s0 = document.getElementsByTagName("script")[0];
+                s1.async = true;
+                s1.src = 'https://embed.tawk.to/687e53f104ad1b191957cac9/1j0mnfqmu';
+                s1.charset = 'UTF-8';
+                s1.setAttribute('crossorigin', '*');
+                s0.parentNode.insertBefore(s1, s0);
+              })();
+            `,
+          }}
+        />
 
-        {/* App Wrapper */}
-        <div className="debug">
-          <ClientWrapper>
-            <WishlistProvider>{children}</WishlistProvider>
-          </ClientWrapper>
-        </div>
+          <Toaster position="top-right" reverseOrder={false} />
+        <AppContextProvider>
+          {/* <WishlistProvider> */}
+            {/* <Header /> */}
+            <main className="min-h-screen">{children}</main>
+            {/* <Footer /> */}
+          {/* </WishlistProvider> */}
+        </AppContextProvider>
       </body>
     </html>
   );

@@ -8,7 +8,7 @@ const Login = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4 py-8">
       <div className="flex flex-col md:flex-row w-full max-w-6xl rounded-2xl shadow-2xl overflow-hidden bg-white">
-        {/* Left */}
+        
         <div
           className="hidden md:block md:w-3/5 bg-cover bg-center"
           style={{ backgroundImage: "url('/login.jpg')" }}

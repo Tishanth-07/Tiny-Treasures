@@ -8,9 +8,20 @@ import { AppContextProvider } from "@/context/AppContext";
 import { Toaster } from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { Metadata } from "next";
 
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
+
+export const metadata: Metadata = {
+  title: 'Tiny Treasure',
+  description: 'Discover beautiful 3D miniatures and collectibles',
+  icons: {
+    icon: '/logo.jpg',
+    shortcut: '/logo.jpg',
+    apple: '/logo.jpg',
+  },
+};
 
 export default function RootLayout({
   children,

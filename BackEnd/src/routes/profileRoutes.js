@@ -47,9 +47,9 @@ router
 
 router.put("/addresses/default/:id", auth, setDefaultAddress);
 
-// ✅ Profile Image Upload Route
+// ✅ Profile Image Upload Route (use authenticated user, no URL param)
 router.post(
-  "/upload-image/:userId",
+  "/upload-image",
   auth,
   upload.single("image"),
   uploadProfileImage

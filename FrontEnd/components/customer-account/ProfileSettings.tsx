@@ -24,10 +24,8 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ onClose, onImageUploa
 
       {/* Profile image upload component handles uploading itself */}
       <ProfileImageUpload
-        userId={session?.user?.id || ""}
-        onUploadSuccess={(filename: string) => {
-          const fullUrl = `/uploads/${filename}`;
-          onImageUpload?.(fullUrl); // Pass to parent if callback provided
+        onUploadSuccess={(imageUrl: string) => {
+          onImageUpload?.(imageUrl);
         }}
       />
 

@@ -98,14 +98,17 @@ export default function ProfilePage() {
     try {
       setSaving(true);
       const res = await updateProfile(updatedData);
-      if (res) {
+      // After saving, refetch full profile to ensure consistent shape and latest data
+      const profileRes = await getProfile();
+      const profile = (profileRes as any).profile ?? profileRes;
+      if (profile) {
         setUserData({
-          name: res.name || "",
-          email: res.email || "",
-          mobile: res.mobile,
-          birthday: res.birthday,
-          gender: res.gender,
-          addresses: res.addresses || [],
+          name: profile.name || "",
+          email: profile.email || "",
+          mobile: profile.mobile || "",
+          birthday: profile.birthday || "",
+          gender: profile.gender || "",
+          addresses: profile.addresses || [],
         });
         setEditMode(false);
       }

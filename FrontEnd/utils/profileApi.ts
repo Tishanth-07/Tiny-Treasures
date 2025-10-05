@@ -46,7 +46,8 @@ export const updateProfile = async (profileData: {
 }): Promise<any> => {
   try {
     const response = await axiosInstance.put("/api/profile", profileData);
-    return response.data;
+    // Backend returns { success: true, profile: updatedCustomer }
+    return response.data?.profile ?? response.data;
   } catch (error: any) {
     console.error("Profile update error:", error);
     throw new Error(

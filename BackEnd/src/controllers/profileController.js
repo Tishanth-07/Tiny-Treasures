@@ -10,15 +10,46 @@ export const getProfile = async (req, res) => {
   try {
     const userId = req.user._id;
 
+    // Try to find customer by userId first
     let customer = await Customer.findOne({ userId });
 
+    // If not found by userId, try to find by email to avoid duplicate creation
+    if (!customer && req.user.email) {
+      customer = await Customer.findOne({ email: req.user.email.toLowerCase() });
+      // If found by email but linked to a different/missing userId, attach current userId
+      if (customer && String(customer.userId) !== String(userId)) {
+        customer.userId = userId;
+        await customer.save();
+      }
+    }
+
+    // If still not found, create a new one
     if (!customer) {
-      customer = await Customer.create({
-        userId,
-        email: req.user.email,
-        profileComplete: false,
-      });
+      try {
+        customer = await Customer.create({
+          userId,
+          email: req.user.email?.toLowerCase(),
+          profileComplete: false,
+        });
+      } catch (createErr) {
+        // Handle duplicate key error (E11000) gracefully by reconciling existing doc
+        if (createErr && createErr.code === 11000 && req.user.email) {
+          customer = await Customer.findOne({ email: req.user.email.toLowerCase() });
+          if (customer) {
+            if (String(customer.userId) !== String(userId)) {
+              customer.userId = userId;
+              await customer.save();
+            }
+          } else {
+            // Re-throw if not resolvable
+            throw createErr;
+          }
+        } else {
+          throw createErr;
+        }
+      }
     } else {
+      // Ensure email is synced if missing on customer
       if (!customer.email && req.user.email) {
         customer.email = req.user.email;
         await customer.save();
@@ -26,6 +57,11 @@ export const getProfile = async (req, res) => {
     }
 
     const user = await User.findById(userId);
+
+    // Build public URL for profile image if present
+    const profileImageUrl = customer?.profileImage
+      ? `${req.protocol}://${req.get("host")}/uploads/${customer.profileImage}`
+      : "";
 
     res.status(200).json({
       profile: {
@@ -36,6 +72,7 @@ export const getProfile = async (req, res) => {
         gender: customer.gender || "",
         addresses: user?.address ? [user.address] : [],
         defaultAddress: user?.address || null,
+        profileImage: profileImageUrl,
       },
     });
   } catch (err) {
@@ -267,8 +304,8 @@ export const getProfileImage = async (req, res) => {
 
 export const uploadProfileImage = async (req, res) => {
   try {
-     const userId = req.params.userId;
-     const imagePath = req.file.path.replace(/\\/g, "/");
+    const userId = req.user._id; // use authenticated user
+    const imagePath = req.file.path.replace(/\\/g, "/");
 
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
@@ -293,15 +330,15 @@ export const uploadProfileImage = async (req, res) => {
       }
     }
 
-    customer.profileImage = req.file.filename;
+    // Save relative path including subfolder used by multer storage
+    customer.profileImage = path.posix.join("profile", req.file.filename);
     await customer.save();
 
-    res
-      .status(200)
-      .json({
-        message: "Profile image uploaded",
-        imageUrl: `http://localhost:5500/${imagePath}`,
-      });
+    res.status(200).json({
+      message: "Profile image uploaded",
+      filename: req.file.filename,
+      imageUrl: `http://localhost:5500/uploads/profile/${req.file.filename}`,
+    });
   } catch (error) {
     console.error("Error uploading profile image:", error);
     res.status(500).json({ message: "Server error" });

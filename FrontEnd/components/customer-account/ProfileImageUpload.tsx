@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, ChangeEvent } from "react";
+import axiosInstance from "@/services/api";
+import { getAuthToken } from "@/utils/auth-utils/api";
 
 interface ProfileImageUploadProps {
-  userId: string;
   onUploadSuccess?: (imageUrl: string) => void;
 }
 
-const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ userId, onUploadSuccess }) => {
+const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ onUploadSuccess }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
@@ -34,31 +35,22 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ userId, onUploa
 
   try {
     const formData = new FormData();
-    formData.append("image", selectedFile); // ✅ must match multer field in backend
+    formData.append("image", selectedFile); // field name must match backend multer
 
-    const res = await fetch(`http://localhost:5500/api/profile/upload-image/${userId}`, {
-      method: "POST",
-      body: formData,
+    const token = getAuthToken?.() || (typeof window !== 'undefined' ? localStorage.getItem('token') : null);
+    const res = await axiosInstance.post("/api/profile/upload-image", formData, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 
-    const contentType = res.headers.get("content-type");
+    const data = res.data;
+    setUploadedUrl(data.imageUrl);
+    onUploadSuccess?.(data.imageUrl);
 
-    if (contentType && contentType.includes("application/json")) {
-      const data = await res.json(); // ✅ read only once
-      if (!res.ok) throw new Error(data.message || "Upload failed");
-
-      setUploadedUrl(data.imageUrl);
-      onUploadSuccess?.(data.imageUrl);
-
-      setSelectedFile(null);
-      setPreviewUrl(null);
-    } else {
-      // fallback in case response is not JSON
-      const text = await res.text();
-      throw new Error(text || "Upload failed");
-    }
+    setSelectedFile(null);
+    setPreviewUrl(null);
   } catch (err: any) {
-    setError(err.message || "Something went wrong");
+    const serverMsg = err?.response?.data?.message || err?.response?.data?.error;
+    setError(serverMsg || err.message || "Something went wrong");
   } finally {
     setLoading(false);
   }

@@ -152,10 +152,10 @@ const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
     </Link>
 
     {/* Logout Button */}
-    <button className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium shadow transition-all transform hover:scale-[1.02]">
+    <div className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium shadow transition-all transform hover:scale-[1.02]">
       <FaSignOutAlt className="text-base" />
       <LogoutButton />
-    </button>
+    </div>
   </div>
 
   {/* Theme Toggle Button - now in black */}

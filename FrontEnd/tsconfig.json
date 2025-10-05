@@ -22,7 +22,7 @@
         "name": "next"
       }
     ],
-    "ignoreDeprecations": "6.0",
+    "baseUrl": "",
     "paths": {
       "@/*": ["./*"] 
       
@@ -43,4 +43,3 @@
     "node_modules"
   ]
 }
-

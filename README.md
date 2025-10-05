@@ -2,7 +2,7 @@
 
 
 **Project:** 2nd Year Software Project  
-**Client Names:** [Tiny Treasure]
+**Client Name:** [Tiny Treasure]
 
 
 

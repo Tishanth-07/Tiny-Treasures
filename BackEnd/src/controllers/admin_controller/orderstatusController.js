@@ -18,8 +18,8 @@ export const getNewOrders = async (req, res) => {
                     // From product item
                     productId: item.productId,
                     name: item.name,
-                    cid: order.userId,  // or some other customer id if you have
-                    category: item.category || "-", // add category if you store it in item, else "-"
+                    cid: order.userId,  
+                    category: item.category || "-", 
                     frameColor: item.frameColor,
                     theme: item.themeColor || item.theme || "-",
                     size: item.size,
@@ -29,8 +29,12 @@ export const getNewOrders = async (req, res) => {
                 });
             });
         });
-
+        await Notification.create({
+            type: "coupon",
+            message: `Order Number ${orderNumber} is placed now.`,
+          });
         res.status(200).json(flatOrders);
+
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch new orders", error });
     }
@@ -43,7 +47,7 @@ export const updateOrderStatus = async (req, res) => {
         const { status } = req.body;
 
 
-        const validStatuses = ["Order Placed", "Pending", "Completed"];
+        const validStatuses = ["Order Placed", "Processing", "Completed"];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: "Invalid status value" });
         }
@@ -57,6 +61,12 @@ export const updateOrderStatus = async (req, res) => {
         if (!updateOrder) {
             return res.status(404).json({ message: "Order not found" });
         }
+
+       
+        await Notification.create({
+            type: "coupon",
+            message: `one Order  is placed.`,
+          });
 
         res.json(updateOrder);
 

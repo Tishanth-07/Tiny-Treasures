@@ -1,11 +1,27 @@
 import mongoose from "mongoose";
 
-const notificationSchema = new mongoose.Schema({
-    type : String,
-    message: String,
-    seen:{type:Boolean , default:false},
-    createdAt: {type:Date , default: Date.now ,expires:"30d"}
-});
+const NotificationSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ["order", "refund", "coupon", "advertisement"],
+      required: true,
+    },
+    message: { type: String, required: true },
+    seen: { type: Boolean, default: false },
+    orderId: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    advertisementId: { type: mongoose.Schema.Types.ObjectId, ref: "Advertisement" },
+    createdAt: { type: Date, default: Date.now },
+    expiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days TTL
+      index: { expireAfterSeconds: 0 },
+    },
 
-const Notification = mongoose.model('Notification', notificationSchema);
-export default Notification;
+  },
+  { timestamps: true }
+);
+
+export default mongoose.models.Notification ||
+  mongoose.model("Notification", NotificationSchema);

@@ -18,8 +18,8 @@ export const getCompletedOrders = async (req, res) => {
                     // From product item
                     productId: item.productId,
                     name: item.name,
-                    cid: order.userId,  // or some other customer id if you have
-                    category: item.category || "-", // add category if you store it in item, else "-"
+                    cid: order.userId,  
+                    category: item.category || "-", 
                     frameColor: item.frameColor,
                     theme: item.themeColor || item.theme || "-",
                     size: item.size,
@@ -42,7 +42,7 @@ export const markOrderAsFinal = async (req, res) => {
         const OrderId = req.params.id;
         const { status } = req.body;
 
-        const validStatuses = ["Order Placed", "Pending", "Completed"];
+        const validStatuses = ["Order Placed", "Processing", "Completed"];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: "Invalid status value" });
         }
@@ -51,7 +51,7 @@ export const markOrderAsFinal = async (req, res) => {
         const updateOrder = await Order.findOneAndUpdate(
             { _id: OrderId },
             { status },
-            { new: true } // This ensures it returns the updated doc
+            { new: true } 
         );
 
         if (!updateOrder) {

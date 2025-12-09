@@ -421,47 +421,47 @@ FrontEnd/
 ## 🔹Screenshots
 
 ### 💠 Home Page
-![Home Screenshot](frontend/public/screenshots/home1.png)
-![Home Screenshot](frontend/public/screenshots/home2.png)
+![Home Screenshot](FrontEnd/public/screenshots/home1.png)
+![Home Screenshot](FrontEnd/public/screenshots/home2.png)
 
 ### 💠 Advertisement
-![Product Page](frontend/public/screenshots/products1.png)
+![Product Page](FrontEnd/public/screenshots/products1.png)
 
 ### 💠 Product Details
-![Product Page](frontend/public/screenshots/products2.png)
+![Product Page](FrontEnd/public/screenshots/products2.png)
 
 ### Customization Page
-![Product Page](frontend/public/screenshots/products3.png)
-![Product Page](frontend/public/screenshots/products4.png)
+![Product Page](FrontEnd/public/screenshots/products3.png)
+![Product Page](FrontEnd/public/screenshots/products4.png)
 
 ### 💠 LOGIN Page
-![Login Page](frontend/public/screenshots/login.png)
+![Login Page](FrontEnd/public/screenshots/login.png)
 
 ### 💠 Shopping Cart
-![cart Page](frontend/public/screenshots/cart1.png)
-![cart Page](frontend/public/screenshots/cart2.png)
+![cart Page](FrontEnd/public/screenshots/cart1.png)
+![cart Page](FrontEnd/public/screenshots/cart2.png)
 
 ### 💠 Add Review page
-![review Page](frontend/public/screenshots/review1.png)
+![review Page](FrontEnd/public/screenshots/review1.png)
 
 ### 💠 Profile Page 
-![profile Page](frontend/public/screenshots/profile.jpeg)
+![profile Page](FrontEnd/public/screenshots/profile.jpeg)
 
 ### 💠 About page
-![about Page](frontend/public/screenshots/about.png)
+![about Page](FrontEnd/public/screenshots/about.png)
 
 ### 💠 Contact us page 
-![review Page](frontend/public/screenshots/contact.png)
+![review Page](FrontEnd/public/screenshots/contact.png)
 
 ### 💠 Terms and policy
-![terms Page](frontend/public/screenshots/terms.png)
+![terms Page](FrontEnd/public/screenshots/terms.png)
 
 ### 💠 Feed back 
-![feedback Page](frontend/public/screenshots/feedback.png)
+![feedback Page](FrontEnd/public/screenshots/feedback.png)
 
 ### 💠 Admin Dashboard
-![admin Page](frontend/public/screenshots/admin1.jpeg)
-![admin Page](frontend/public/screenshots/admin2.jpeg)
-![admin Page](frontend/public/screenshots/admin3.jpeg)
+![admin Page](FrontEnd/public/screenshots/admin1.jpeg)
+![admin Page](FrontEnd/public/screenshots/admin2.jpeg)
+![admin Page](FrontEnd/public/screenshots/admin3.jpeg)
 
 ---

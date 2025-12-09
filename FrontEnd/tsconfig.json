@@ -38,7 +38,8 @@
     "app/my-account/orders/pending",
     "app/my-account/orders/cancelled",
     "app/my-account/orders/shipped",
-    "app/checkout"
+    "app/checkout",
+    "app/types/**/*"
   ],
   "exclude": [
     "node_modules"

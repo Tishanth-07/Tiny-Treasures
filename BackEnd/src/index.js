@@ -42,11 +42,9 @@ import  "./config/passport.js";
 import { routes as enquiryRoutes } from "./routes/enquiryRoutes.js";
 import { routes as subscribeRoutes } from "./routes/subscribeRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
-import { routes as pdfRoutes } from "./routes/pdfRoutes.js";
-import profileRoutes from "./routes/profileRoutes.js";import advertroutes from "./routes/admin_routes/advertRoutes.js"
-
-
-
+ import { routes as pdfRoutes } from "./routes/pdfRoutes.js";
+ import profileRoutes from "./routes/profileRoutes.js";import advertroutes from "./routes/admin_routes/advertRoutes.js"
+ import locationsRoutes from "./routes/locations.js";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////testing
 
@@ -281,6 +279,7 @@ app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/admin", productRoutes);
 app.use("/api/customers", customersRoutes);
+app.use("/api", locationsRoutes);
 
 //app.use("/api", addressRoutes);
 app.use("/api/admin", productRoutes);
